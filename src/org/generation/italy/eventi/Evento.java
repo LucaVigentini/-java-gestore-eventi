@@ -13,18 +13,19 @@ public class Evento {
 	private int prenotedSeats;
 
 	// costruttori
-	public Evento(String titolo, LocalDate date, int totalSeats) throws IllegalArgumentException {
+	public Evento(String titolo, int totalSeats, LocalDate date, int prenotedSeats) throws IllegalArgumentException {
 		this.titolo = titolo;
 
-		if (isValidData(true)) {
+		if (isValidData(date)) {
 			this.date = date;
 		} else {
 			throw new IllegalArgumentException("Questo evento è già avvenuto");
 		}
-		if (isValidSeats(true)) {
+		
+		if (isValidSeats(totalSeats)) {
 			this.totalSeats = totalSeats;
 		} else {
-			throw new IllegalArgumentException("Questo evento è già al completo");
+			throw new IllegalArgumentException("Non sono disponibili posti");
 		}
 
 		this.prenotedSeats = 0;
@@ -58,28 +59,28 @@ public class Evento {
 
 	// metodi public
 
-	public int prenota() {
+	public int prenota() throws IllegalArgumentException {
 		if (totalSeats >= prenotedSeats) {
 			prenotedSeats++;
 			return prenotedSeats;
 		} else {
-			return prenotedSeats;
+			throw new IllegalArgumentException("Non sono disponibili tutti questi posti!");
 		}
 	}
 
-	public int disdici() {
+	public int disdici() throws IllegalArgumentException {
 		if (prenotedSeats > 0) {
 			prenotedSeats--;
 			return prenotedSeats;
 		} else {
-			return prenotedSeats;
+			throw new IllegalArgumentException("Non ci sono tutte queste prenotazioni");
 		}
 
 	}
 
 	public String dataFormattata() {
 		String dataFormattata;
-		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		dataFormattata = date.format(df);
 		return dataFormattata;
 	}
@@ -89,21 +90,22 @@ public class Evento {
 	}
 
 	// metodi private
-	private boolean isValidData(boolean validData) {
+	private boolean isValidData(LocalDate date) {
 		LocalDate dataLocale = LocalDate.now();
+		
 		if (date.isAfter(dataLocale)) {
-			return validData = true;
+			return true;
 		} else {
-			return validData = false;
+			return false;
 		}
 
 	}
 
-	private boolean isValidSeats(boolean validSeats) {
-		if (totalSeats == prenotedSeats) {
-			return validSeats = false;
+	private boolean isValidSeats(int totalSeats) {
+		if (totalSeats == 0) {
+			return false;
 		} else {
-			return validSeats = true;
+			return true;
 		}
 
 	}
